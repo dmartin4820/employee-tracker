@@ -1,5 +1,6 @@
 INSERT INTO department (id, name)
-VALUES (000, "Physics");
+VALUES (000, "Physics"),
+       (001, "Computer Science");
 
 INSERT INTO employee_role (id, title, salary, department_id)
 VALUES (000, "Professor", 100000.00, 000),

@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
-
-
+const mysql = require('mysql2');
+const cTable = require('console.table');
 
 function addEmployee() {
 	inquirer
@@ -47,16 +47,16 @@ function addRole() {
 
 }
 
-function addDepartment() {
-	inquirer
+async function addDepartment() {
+	await inquirer
 		.prompt({
 			type: 'input',
 			name: 'departmentName',
 			message: 'Enter the name of the department'
 		})
-		.then(({departmentName}) => {
-			//add department to db
-		})	
+		//.then(({departmentName}) => {
+		//	//add department to db
+		//})	
 }
 
 async function startPrompt() {
@@ -72,16 +72,34 @@ async function startPrompt() {
 	return startOption;
 }
 
+function viewDepartments() {
+	const db = mysql.createConnection(
+	{
+		host: 'localhost',
+		user: 'root',
+		password: '123456',
+		database: 'company_db'
+	},
+	console.log('Successful connection to company_db')
+	)
+
+	db.query('SELECT * FROM department', (err, results) => {
+		if (err) throw err;
+		console.table(results)
+	});
+	
+}
+
 async function employeeTracker() {
-	const startOption = await startPrompt();
+	const {startOption} = await startPrompt();
 	switch(startOption) {
 		//case 'View all departments':
 
 		//case 'View all roles':
 		
 		//case 'View all employees':
-		
 		case 'Add a department':
+			console.log('Add dept')
 			addDepartment();
 			break;	
 		case 'Add a role':
@@ -97,4 +115,6 @@ async function employeeTracker() {
 	}
 }
 
-employeeTracker();
+//employeeTracker();
+
+viewDepartments();
