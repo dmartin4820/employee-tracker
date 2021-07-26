@@ -76,17 +76,25 @@ async function startPrompt() {
 
 async function employeeTracker() {
 	const {startOption} = await startPrompt();
-	const db = new Database('company_db');
 
 	switch(startOption) {
 		case 'View all departments':
-			db.showDepartments();
+			console.log('\n')
+			console.table(await db.departments())
+			console.log('\n')
+			employeeTracker();
 			break;
 		case 'View all roles':
-			db.showRoles();
+			console.log('\n')
+			console.table(await db.roles())
+			console.log('\n')
+			employeeTracker();
 			break;		
 		case 'View all employees':
-			db.showEmployees();
+			console.log('\n')
+			console.table(await db.employees())
+			console.log('\n')
+			employeeTracker();
 			break;
 		case 'Add a department':
 			console.log('Add dept')
@@ -95,7 +103,6 @@ async function employeeTracker() {
 		case 'Add a role':
 			addRole();
 			break;
-		
 		case 'Add an employee':
 			addEmployee();
 			break;	
@@ -103,7 +110,9 @@ async function employeeTracker() {
 			updateEmployee(employee);
 			break;
 	}
+	return;
 }
 
+
+const db = new Database('company_db');
 employeeTracker();
-//viewDepartments();
