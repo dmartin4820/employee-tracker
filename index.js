@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
+const Database = require('./lib/database');
 
 function addEmployee() {
 	inquirer
@@ -72,32 +73,21 @@ async function startPrompt() {
 	return startOption;
 }
 
-function viewDepartments() {
-	const db = mysql.createConnection(
-	{
-		host: 'localhost',
-		user: 'root',
-		password: '123456',
-		database: 'company_db'
-	},
-	console.log('Successful connection to company_db')
-	)
-
-	db.query('SELECT * FROM department', (err, results) => {
-		if (err) throw err;
-		console.table(results)
-	});
-	
-}
 
 async function employeeTracker() {
 	const {startOption} = await startPrompt();
-	switch(startOption) {
-		//case 'View all departments':
+	const db = new Database('company_db');
 
-		//case 'View all roles':
-		
-		//case 'View all employees':
+	switch(startOption) {
+		case 'View all departments':
+			db.showDepartments();
+			break;
+		case 'View all roles':
+			db.showRoles();
+			break;		
+		case 'View all employees':
+			db.showEmployees();
+			break;
 		case 'Add a department':
 			console.log('Add dept')
 			addDepartment();
@@ -115,6 +105,5 @@ async function employeeTracker() {
 	}
 }
 
-//employeeTracker();
-
-viewDepartments();
+employeeTracker();
+//viewDepartments();

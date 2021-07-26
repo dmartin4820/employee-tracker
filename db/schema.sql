@@ -4,24 +4,24 @@ CREATE DATABASE company_db;
 
 USE company_db;
 
-CREATE TABLE department (
+CREATE TABLE departments (
 	id INT NOT NULL,
 	name VARCHAR(100),
 	PRIMARY KEY (id)
 );
 
-CREATE TABLE employee_role (
+CREATE TABLE employee_roles (
 	id INT NOT NULL,
 	title VARCHAR(30) NOT NULL,
 	salary DECIMAL(10,2) NOT NULL,
 	department_id INT,
 	PRIMARY KEY (id),
 	FOREIGN KEY (department_id)
-	REFERENCES department(id)
+	REFERENCES departments(id)
 	ON DELETE SET NULL
 );
 
-CREATE TABLE employee (
+CREATE TABLE employees (
 	id INT NOT NULL,
 	first_name VARCHAR(30),
 	last_name VARCHAR(30),
@@ -29,9 +29,9 @@ CREATE TABLE employee (
 	manager_id INT,
 	PRIMARY KEY (id),
 	FOREIGN KEY (role_id)
-	REFERENCES employee_role(id)
+	REFERENCES employee_roles(id)
 	ON DELETE SET NULL,
 	FOREIGN KEY (manager_id)
-	REFERENCES employee(id)
+	REFERENCES employees(id)
 	ON DELETE SET NULL
 );
