@@ -5,14 +5,14 @@ CREATE DATABASE company_db;
 USE company_db;
 
 CREATE TABLE departments (
-	id INT NOT NULL,
+	id INT NOT NULL AUTO_INCREMENT,
 	name VARCHAR(100),
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE employee_roles (
 	id INT NOT NULL,
-	title VARCHAR(30) NOT NULL,
+	title VARCHAR(100) NOT NULL,
 	salary DECIMAL(10,2) NOT NULL,
 	department_id INT,
 	PRIMARY KEY (id),

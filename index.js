@@ -5,7 +5,7 @@ const Database = require('./lib/database');
 
 function addEmployee() {
 	inquirer
-		.prompt({
+		.prompt([{
 			type: 'input',
 			name: 'employeeFirst',
 			message: 'Employee first name: '
@@ -21,7 +21,7 @@ function addEmployee() {
 			type: 'input',
 			name: 'employeeManager',
 			message: `Enter the employee's manager`
-		})
+		}])
 		.then (({employeeFirst, employeeLast, employeeRole, employeeManager}) => {
 			//add employee
 		})
@@ -29,7 +29,7 @@ function addEmployee() {
 
 function addRole() {
 	inquirer
-		.prompt({
+		.prompt([{
 			type: 'input',
 			name: 'roleName',
 			message: 'Enter the name of the role'
@@ -41,7 +41,7 @@ function addRole() {
 			type: 'input',
 			name: 'roleDepartment',
 			message: 'Enter the department for the role'
-		})
+		}])
 		.then(({roleName, roleSalary, roleDepartment}) => {
 			//add to database
 		})	
@@ -49,15 +49,14 @@ function addRole() {
 }
 
 async function addDepartment() {
-	await inquirer
+	const {departmentName} = await inquirer
 		.prompt({
 			type: 'input',
 			name: 'departmentName',
 			message: 'Enter the name of the department'
-		})
-		//.then(({departmentName}) => {
-		//	//add department to db
-		//})	
+		});
+	const response = await db.addDepartment(departmentName);
+	console.log(`${response[0].affectedRows} row(s) affected at id at ${response[0].insertId}`)
 }
 
 async function startPrompt() {
@@ -97,8 +96,8 @@ async function employeeTracker() {
 			employeeTracker();
 			break;
 		case 'Add a department':
-			console.log('Add dept')
-			addDepartment();
+			await addDepartment();
+			employeeTracker();
 			break;	
 		case 'Add a role':
 			addRole();
