@@ -27,8 +27,9 @@ function addEmployee() {
 		})
 }
 
-function addRole() {
-	inquirer
+async function addRole() {
+	const {roleName, roleSalary, roleDepartment} = 
+	await inquirer
 		.prompt([{
 			type: 'input',
 			name: 'roleName',
@@ -36,16 +37,19 @@ function addRole() {
 		}, {
 			type: 'input',
 			name: 'roleSalary',
-			message: 'Enter the salary for the role'	
+			message: 'Enter the salary for the role',
+			validate: (roleSalary) => {
+				return roleSalary > 0 
+				? true
+				: 'Please enter a valid salary above or equal to 0'
+			}
 		},{	
 			type: 'input',
 			name: 'roleDepartment',
 			message: 'Enter the department for the role'
 		}])
-		.then(({roleName, roleSalary, roleDepartment}) => {
-			//add to database
-		})	
 
+	
 }
 
 async function addDepartment() {
@@ -53,65 +57,39 @@ async function addDepartment() {
 		.prompt({
 			type: 'input',
 			name: 'departmentName',
-			message: 'Enter the name of the department'
+			message: 'Enter the name of the department',
+			validate: (departmentName) => {
+				return departmentName.length > 4 
+				? true 
+				: `Please enter a valid department with more that 4 characters`
+			}
 		});
 	const response = await db.addDepartment(departmentName);
-	console.log(`${response[0].affectedRows} row(s) affected at id at ${response[0].insertId}`)
+	console.log(`\n${response[0].affectedRows} row(s) affected at id at ${response[0].insertId}\n`)
 }
 
+
 async function startPrompt() {
-	const startOption = await inquirer
+	const {startOption} = await inquirer
 		.prompt({
 			type: 'list',
 			name: 'startOption',
 			message: 'Please choose one of the following options:',
-			choices: ['View all departments', 'View all roles', 'View all employees',
-				  'Add a department', 'Add a role', 'Add an employee', 
-				  'Update an employee role']
+			choices: [{name:'View all departments',
+				   value: () => db.departments()},
+				   {name: 'View all roles',
+				    value: () => db.roles()},
+				   {name: 'View all employees',
+				    value: () => db.employees()},
+				   {name: 'Add a department',
+				    value: () => addDepartment()}]
+				  //'Add a department', 'Add a role', 'Add an employee', 
+				  //'Update an employee role']
 		});
-	return startOption;
+	
+	await startOption();
+	startPrompt();
 }
-
-
-async function employeeTracker() {
-	const {startOption} = await startPrompt();
-
-	switch(startOption) {
-		case 'View all departments':
-			console.log('\n')
-			console.table(await db.departments())
-			console.log('\n')
-			employeeTracker();
-			break;
-		case 'View all roles':
-			console.log('\n')
-			console.table(await db.roles())
-			console.log('\n')
-			employeeTracker();
-			break;		
-		case 'View all employees':
-			console.log('\n')
-			console.table(await db.employees())
-			console.log('\n')
-			employeeTracker();
-			break;
-		case 'Add a department':
-			await addDepartment();
-			employeeTracker();
-			break;	
-		case 'Add a role':
-			addRole();
-			break;
-		case 'Add an employee':
-			addEmployee();
-			break;	
-		case 'Update an employee role':
-			updateEmployee(employee);
-			break;
-	}
-	return;
-}
-
 
 const db = new Database('company_db');
-employeeTracker();
+startPrompt();
