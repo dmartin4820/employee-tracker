@@ -30,15 +30,20 @@ async function updateRole() {
 	}];
 
 	const {employeeToUpdate, employeeNewRole} = await prompt(questions);
+	
 	const employeeId = employees.find((employee) => `${employee.first_name} ${employee.last_name}` === employeeToUpdate).id;
+	
 	const roleId = roles.find((role) => role.title === employeeNewRole).id;
+	
 	const response = await db.updateRole(roleId, employeeId);
+	
 	printResponse(response);
 }
 
 async function addEmployee() {
 	const roles = await db.getRoles();
 	const managers = await db.getManagers();
+	managers.push({manager: 'None'});
 
 	const questions = [{
 			type: 'input',
@@ -57,11 +62,17 @@ async function addEmployee() {
 			type: 'list',
 			name: 'employeeManager',
 			message: `Select the employee's manager`,
-			choices: managers.map(manager => manager.manager) 
+			choices: managers.map(manager => manager.manager)
 	}]
 	const {employeeFirst, employeeLast, employeeRole, employeeManager} = await prompt(questions);
+	
 	const employeeRoleId = roles.find(({title}) => title === employeeRole).id;
-	const employeeManagerId = managers.find(({manager}) => manager === employeeManager).id;
+
+	let employeeManagerId = null;
+	if (employeeManager !== 'None') {
+		employeeManagerId = managers.find(({manager}) => manager === employeeManager).id;
+	} 
+
 	const response = await db.addEmployee(employeeFirst, employeeLast, employeeRoleId, employeeManagerId);
 	printResponse(response);
 }
@@ -93,6 +104,7 @@ async function addRole() {
 	const {roleName, roleSalary, roleDepartment} = await prompt(questions);
 	//Get the department id associated with the department
 	const roleDepartmentId = departments.find((department) => department.name === roleDepartment).id;
+	
 	const response = await db.addRole(roleName, roleSalary, roleDepartmentId);
 	printResponse(response);	
 }
