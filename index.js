@@ -4,13 +4,36 @@ const cTable = require('console.table');
 const Database = require('./lib/database');
 
 function printResponse(response) {
-	return console.log(`\n${response.affectedRows} row(s) affected at id at ${response.insertId}\n`)
+	return console.log(`\n${response.affectedRows} row(s) affected at id ${response.insertId}\n`)
 }
 
 async function prompt(questions) {
 	const answers = await inquirer
 		.prompt(questions)
 	return answers;
+}
+
+async function updateRole() {
+	const employees = await db.getEmployees();
+	const roles = await db.getRoles(); 
+
+	const questions = [{
+		type: 'list',
+		name: 'employeeToUpdate',
+		message: 'Select an employee to update',
+		choices: employees.map((employee) => `${employee.first_name} ${employee.last_name}`)
+	}, {
+		type: 'list',
+		name: 'employeeNewRole',
+		message: `Select an employee's new role`,
+		choices: roles.map((role) => role.title)
+	}];
+
+	const {employeeToUpdate, employeeNewRole} = await prompt(questions);
+	const employeeId = employees.find((employee) => `${employee.first_name} ${employee.last_name}` === employeeToUpdate).id;
+	const roleId = roles.find((role) => role.title === employeeNewRole).id;
+	const response = await db.updateRole(roleId, employeeId);
+	printResponse(response);
 }
 
 async function addEmployee() {
@@ -124,7 +147,9 @@ async function startPrompt() {
 				   {name: 'Add a role',
 				    value: addRole},
 				   {name: 'Add an employee',
-				    value: addEmployee}]
+				    value: addEmployee},
+				   {name: `Update an employee's role`,
+				    value: updateRole}]
 	}];
 	const {startOption} = await prompt(questions);
 	await startOption();
@@ -133,4 +158,3 @@ async function startPrompt() {
 
 const db = new Database('company_db');
 startPrompt();
-//db.getManagers();
