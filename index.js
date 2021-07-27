@@ -13,9 +13,11 @@ async function prompt(questions) {
 	return answers;
 }
 
-function addEmployee() {
-	inquirer
-		.prompt([{
+async function addEmployee() {
+	const roles = await db.getRoles();
+	const managers = await db.getManagers();
+
+	const questions = [{
 			type: 'input',
 			name: 'employeeFirst',
 			message: 'Employee first name: '
@@ -24,21 +26,25 @@ function addEmployee() {
 			name: 'employeeLast',
 			message: 'Employee last name: '
 		}, {
-			type: 'input',
+			type: 'list',
 			name: 'employeeRole',
-			message: `Enter the employee's role`
+			message: `Select the role for employee`,
+			choices: roles.map(role => role.title)
 		}, {
-			type: 'input',
+			type: 'list',
 			name: 'employeeManager',
-			message: `Enter the employee's manager`
-		}])
-		.then (({employeeFirst, employeeLast, employeeRole, employeeManager}) => {
-			//add employee
-		})
+			message: `Select the employee's manager`,
+			choices: managers.map(manager => manager.manager) 
+	}]
+	const {employeeFirst, employeeLast, employeeRole, employeeManager} = await prompt(questions);
+	const employeeRoleId = roles.find(({title}) => title === employeeRole).id;
+	const employeeManagerId = managers.find(({manager}) => manager === employeeManager).id;
+	const response = await db.addEmployee(employeeFirst, employeeLast, employeeRoleId, employeeManagerId);
+	printResponse(response);
 }
 
 async function addRole() {
-	let departments = await db.getDepartments();
+	const departments = await db.getDepartments();
 
 	const questions = [{
 			type: 'input',
@@ -108,16 +114,17 @@ async function startPrompt() {
 			name: 'startOption',
 			message: 'Please choose one of the following options:',
 			choices: [{name:'View all departments',
-				   value: () => showDepartments()},
+				   value: showDepartments},
 				   {name: 'View all roles',
-				    value: () => showRoles()},
+				    value: showRoles},
 				   {name: 'View all employees',
-				    value: () => showEmployees()},
+				    value: showEmployees},
 				   {name: 'Add a department',
-				    value: () => addDepartment()},
+				    value: addDepartment},
 				   {name: 'Add a role',
-				    value: () => addRole()}]
-				  //'Update an employee role']
+				    value: addRole},
+				   {name: 'Add an employee',
+				    value: addEmployee}]
 	}];
 	const {startOption} = await prompt(questions);
 	await startOption();
@@ -126,3 +133,4 @@ async function startPrompt() {
 
 const db = new Database('company_db');
 startPrompt();
+//db.getManagers();
