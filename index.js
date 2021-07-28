@@ -131,6 +131,22 @@ function printResults(results) {
 	console.table(results)
 }
 
+async function showDepartmentBudget() {
+	const departments = await db.getDepartments();
+
+	const questions = [{
+		type: 'list',
+		name: 'departmentName',
+		message: 'Select a department to view their budget',
+		choices: departments.map(department => department.name) 
+	}]
+
+	const {departmentName} = await prompt(questions);
+
+	const totalBudget = await db.getDepartmentBudget(departmentName);
+	printResults([{department: departmentName, "total budget": totalBudget}]);
+}
+
 async function showEmployeesFiltered(filter, func) {
 	const filters = await func();
 
@@ -190,6 +206,8 @@ async function startPrompt() {
 				    value: () => showEmployeesFiltered('manager', () => db.getManagers())},
 				   {name: 'View employees by department',
 				    value: () => showEmployeesFiltered('department', () => db.getDepartments())},
+				   {name: 'View total budget of a department',
+				    value: showDepartmentBudget},
 				   {name: 'Add a department',
 				    value: addDepartment},
 				   {name: 'Add a role',
