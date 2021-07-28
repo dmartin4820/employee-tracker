@@ -13,6 +13,33 @@ async function prompt(questions) {
 	return answers;
 }
 
+async function updateEmployeeManager() {
+	const managers = await db.getManagers();
+	const employees = await db.getEmployees();
+
+	const questions = [{
+		type: 'list',
+		name: 'employeeName',
+		message: `Select the employee to update their manager`,
+		choices: employees.map(employee => `${employee.first_name} ${employee.last_name}`)
+	}, {
+		type: 'list',
+		name: 'managerName',
+		message: `Select the employee's new manager`,
+		choices: employees.map(employee => `${employee.first_name} ${employee.last_name}`)
+	}];
+
+	const {employeeName, managerName} = await prompt(questions);
+
+	const employeeId = employees.find(employee => `${employee.first_name} ${employee.last_name}` === employeeName).id;
+	const managerId = employees.find(manager => `${manager.first_name} ${manager.last_name}` === managerName).id;
+
+	const response = await db.updateEmployeeManager(managerId, employeeId);
+
+	printResponse(response);
+	printResults(await db.getEmployees());
+}
+
 async function updateRole() {
 	const employees = await db.getEmployees();
 	const roles = await db.getRoles(); 
@@ -38,6 +65,7 @@ async function updateRole() {
 	const response = await db.updateRole(roleId, employeeId);
 	
 	printResponse(response);
+	printResults(await db.getEmployees());
 }
 
 async function addEmployee() {
@@ -76,6 +104,7 @@ async function addEmployee() {
 
 	const response = await db.addEmployee(employeeFirst, employeeLast, employeeRoleId, employeeManagerId);
 	printResponse(response);
+	printResults(await db.getEmployees());
 }
 
 async function addRole() {
@@ -107,7 +136,8 @@ async function addRole() {
 	const roleDepartmentId = departments.find((department) => department.name === roleDepartment).id;
 	
 	const response = await db.addRole(roleName, roleSalary, roleDepartmentId);
-	printResponse(response);	
+	printResponse(response);
+	printResults(await db.getRoles());	
 }
 
 async function addDepartment() {
@@ -124,6 +154,7 @@ async function addDepartment() {
 	const {departmentName} = await prompt(questions);
 	const response = await db.addDepartment(departmentName);
 	printResponse(response);
+	printResults(await db.getDepartments());
 }
 
 function printResults(results) {
@@ -144,6 +175,7 @@ async function showDepartmentBudget() {
 	const {departmentName} = await prompt(questions);
 
 	const totalBudget = await db.getDepartmentBudget(departmentName);
+	printResults(await db.getEmployeesByDepartment(departmentName));
 	printResults([{department: departmentName, "total budget": totalBudget}]);
 }
 
@@ -215,7 +247,9 @@ async function startPrompt() {
 				   {name: 'Add an employee',
 				    value: addEmployee},
 				   {name: `Update an employee's role`,
-				    value: updateRole}]
+				    value: updateRole},
+				   {name: `Update an employee's manager`,
+				    value: updateEmployeeManager}]
 	}];
 	const {startOption} = await prompt(questions);
 	await startOption();
