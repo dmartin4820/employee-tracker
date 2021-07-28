@@ -19,7 +19,7 @@ This program makes use of MySQL to create 3 tables in a company database with re
 
 The database is accessed by Javascript through the mysql2 package. The specific implementation here relies on a template `Database` which creates the connection to the company database and contains the necessary functions to do the 'heavy-lifting' of the employee tracker. Some of that 'heavy-lifting' has to do with making SQL queries to the database through the mysql2 connection. 
 
-The prompts are mainly handled in the index.js function. The user is prompted and the template `Database` is utilized here in some helper functions to display the table nicely using `console.table`.
+The prompts are mainly handled in the index.js function. The user is prompted and the template `Database` is utilized here in some helper functions to display tables nicely using `console.table`.
 
 
 ## Installation
