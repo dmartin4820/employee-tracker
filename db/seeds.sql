@@ -25,4 +25,8 @@ VALUES ("Ernst", "Rutherford", 001, NULL),
        ("Donald", "Knuth", 003, NULL),
        ("Robert", "Sedgewick", 004, 011),
        ("Scott", "Kim", 004, 011),
-       ("Andrei", "Broder", 004, 011)
+       ("Andrei", "Broder", 004, 011),
+       ("Olga", "Ladyzhenskaya", 005, NULL),
+       ("Nina", "Uraltseva", 006, 015),
+       ("Ludvig", "Faddeev", 006, 015)
+

@@ -131,22 +131,36 @@ function printResults(results) {
 	console.table(results)
 }
 
-async function showEmployeesByManager() {
-	const managers = await db.getManagers();
+async function showEmployeesFiltered(filter, func) {
+	const filters = await func();
 
 	const questions = [{
 		type: 'list',
-		name: 'managerName',
-		message: 'Select a manager to see their employees',
-		choices: managers.map(manager => manager.manager) 
-	}];
+		name: filter,
+		message: `Select a ${filter} to see their employees`,
+		choices: filters.map(_filter => {
+			switch(filter) {
+				case 'department':
+					return _filter.name
+				case 'manager':
+					return _filter.manager
+			}
+		})
+	}]
 
-	const {managerName} = await prompt(questions);
+	const answers = await prompt(questions);
 
-	const employeesByManager = await db.getEmployeesByManager(managerName);
-	console.log(employeesByManager)
-	printResults(employeesByManager);
-}
+	switch(filter) {
+		case 'department':
+			const employeesByDepartment = await db.getEmployeesByDepartment(answers.department);
+			printResults(employeesByDepartment);
+			break;
+		case 'manager':
+			const employeesByManager = await db.getEmployeesByManager(answers.manager);
+			printResults(employeesByManager);
+			break;
+	}
+} 
 
 async function showEmployees() {
 	const results = await db.getEmployees();
@@ -173,7 +187,9 @@ async function startPrompt() {
 				   {name: 'View all employees',
 				    value: showEmployees},
 				   {name: 'View employees by manager',
-				    value: showEmployeesByManager},
+				    value: () => showEmployeesFiltered('manager', () => db.getManagers())},
+				   {name: 'View employees by department',
+				    value: () => showEmployeesFiltered('department', () => db.getDepartments())},
 				   {name: 'Add a department',
 				    value: addDepartment},
 				   {name: 'Add a role',
