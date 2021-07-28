@@ -18,7 +18,11 @@ VALUES ("Ernst", "Rutherford", 001, NULL),
        ("Patrick", "Blackett", 002, 001),
        ("Marie", "Curie", 001, NULL),
        ("Irene", "Joliot-Curie", 002, 005),
+       ("Marguerite", "Perey", 002, 005),
        ("Emmy", "Noether", 005, NULL),
-       ("Grete", "Hermann", 006, 007),
+       ("Grete", "Hermann", 006, 008),
+       ("Hans", "Fitting", 006, 008),
        ("Donald", "Knuth", 003, NULL),
-       ("Robert", "Sedgewick", 004, 009);
+       ("Robert", "Sedgewick", 004, 011),
+       ("Scott", "Kim", 004, 011),
+       ("Andrei", "Broder", 004, 011)

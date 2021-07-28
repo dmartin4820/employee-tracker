@@ -64,6 +64,7 @@ async function addEmployee() {
 			message: `Select the employee's manager`,
 			choices: managers.map(manager => manager.manager)
 	}]
+
 	const {employeeFirst, employeeLast, employeeRole, employeeManager} = await prompt(questions);
 	
 	const employeeRoleId = roles.find(({title}) => title === employeeRole).id;
@@ -130,6 +131,23 @@ function printResults(results) {
 	console.table(results)
 }
 
+async function showEmployeesByManager() {
+	const managers = await db.getManagers();
+
+	const questions = [{
+		type: 'list',
+		name: 'managerName',
+		message: 'Select a manager to see their employees',
+		choices: managers.map(manager => manager.manager) 
+	}];
+
+	const {managerName} = await prompt(questions);
+
+	const employeesByManager = await db.getEmployeesByManager(managerName);
+	console.log(employeesByManager)
+	printResults(employeesByManager);
+}
+
 async function showEmployees() {
 	const results = await db.getEmployees();
 	printResults(results);
@@ -154,6 +172,8 @@ async function startPrompt() {
 				    value: showRoles},
 				   {name: 'View all employees',
 				    value: showEmployees},
+				   {name: 'View employees by manager',
+				    value: showEmployeesByManager},
 				   {name: 'Add a department',
 				    value: addDepartment},
 				   {name: 'Add a role',
