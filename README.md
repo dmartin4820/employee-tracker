@@ -4,10 +4,12 @@
 
 ## Table of Contents
 * [Description](#Description)
+* [How it works](#how-it-works)
 * [Installation](#Installation)
 * [Usage](#Usage)
-* [Tests](#Tests)
 * [Contributors](#Contributors)
+* [Acknowledgments](#Acknowledgments)
+* [Questions](#Questions)
 
 ## Description 
 Employee tracker is a command-line utility that allows a user that owns a company to create departments, roles for those departments, and add employees. In addition to adding employees, a manager for the employee and role can be specified.
