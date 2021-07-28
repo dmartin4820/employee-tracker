@@ -179,13 +179,16 @@ async function showDepartmentBudget() {
 	printResults([{department: departmentName, "total budget": totalBudget}]);
 }
 
+//This function is a general way of displaying employees by either department or manager. Filter is general for department or manager
 async function showEmployeesFiltered(filter, func) {
+	//Call func which is either getManagers or getDepartments. Either should return an array to filters
 	const filters = await func();
 
 	const questions = [{
 		type: 'list',
 		name: filter,
 		message: `Select a ${filter} to see their employees`,
+		//create an array with each element as the department name or manager name
 		choices: filters.map(_filter => {
 			switch(filter) {
 				case 'department':
@@ -198,6 +201,7 @@ async function showEmployeesFiltered(filter, func) {
 
 	const answers = await prompt(questions);
 
+	//Depending on whether the user wants to filter on department or manager, call the appropriate function to get employees by whichever filter.
 	switch(filter) {
 		case 'department':
 			const employeesByDepartment = await db.getEmployeesByDepartment(answers.department);
@@ -251,8 +255,12 @@ async function startPrompt() {
 				   {name: `Update an employee's manager`,
 				    value: updateEmployeeManager}]
 	}];
+
+	//startOption is a function defined by the value in each object in the choices array of questions
 	const {startOption} = await prompt(questions);
+	//run the selected function (e.g. If I choose add a role, it runs addRole)
 	await startOption();
+	//recursively call the prompt until the user ctrl-c's
 	startPrompt();
 }
 
