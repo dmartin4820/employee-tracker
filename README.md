@@ -29,7 +29,18 @@ First clone the repository:
 
 To run the code after cloning, three packages are needed: mysql2, console.table, and inquirer. These can be installed by running `npm i` inside of the cloned repository.
 
-It is also necessary to have mysql installed on your computer. Installation instructions can be found [here](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/)
+It is also necessary to have MySQL installed on your computer. Installation instructions can be found [here](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/)
+
+Once MySQL is installed, connect to the mysql server by running (assuming correct install) :
+
+```mysql -u root -p```.
+
+Then run both these commands in sequence:
+
+```SOURCE schema.sql```
+
+```SOURCE seeds.sql``` (For test entries in database)
+
 
 ## Usage 
 Start the program by running `node index.js`
